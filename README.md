@@ -13,7 +13,7 @@ The goals / steps of this project are the following:
 [image01]: ./output_images/01_classifier_images.png
 [image02]: ./output_images/02_hog_features_YCrCb.png
 [image03]: ./output_images/03_window_areas.png
-[image04]: ./output_images/04_image_windows.png
+[image04]: ./output_images/04_image_windows
 [image05]: ./output_images/05_predictions.png
 [image06]: ./output_images/06_heatmaps.png
 [image07]: ./output_images/07_labels.png
@@ -35,7 +35,7 @@ You're reading it!
 
 ####1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
-The code for this step is contained in the sections "1.1 Initialize images and labels" and "1.2 Extract image features" of the IPython notebook.  
+The code for this step is contained in the sections `1.1 Initialize images and labels` and `1.2 Extract image features` of the IPython notebook.  
 
 I started by reading in all the `vehicle` and `non-vehicle` images and splitting them in a training and a test set. I split the data for vehicle images manually by spliting it according to the filename to prevent overfitting.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
@@ -48,30 +48,34 @@ Eventually, I found the `YCrCb` color space and HOG parameters of `orientations=
 
 ![alt text][image02]
 
-I combined the hog features with color features as it significantly improved the performance of my classifier (section "1.2 Extract image features" first code box).
+I combined the hog features with color features as it significantly improved the performance of my classifier (section `1.2 Extract image features` first code box).
 
 ####2. Explain how you settled on your final choice of HOG parameters.
 
-I initially tried some combinations of parameters. When I had a working model with sufficient results I continued to implement my pipeline. Afterwards I returned and fine-tuned the parameters coming up with the parameters described in the previous section. For efficiency purposes I furthermore scaled down the classifier images to (24,24) (section "1.2 Extract image features" first code box).
+I initially tried some combinations of parameters. When I had a working model with sufficient results I continued to implement my pipeline. Afterwards I returned and fine-tuned the parameters coming up with the parameters described in the previous section. For efficiency purposes I furthermore scaled down the classifier images to (24,24) (section `1.2 Extract image features` first code box).
 
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-Before training my classifier I applied `StandardScaler()` to standardize my combined hog and color features in section "1.3 Scale training and testing data".
-In section "1.4 Fit and test classifier (SVM)" I trained a linear SVM by applying `LinearSVC()` on the training data. 
+Before training my classifier I applied `StandardScaler()` to standardize my combined hog and color features in section `1.3 Scale training and testing data`.
+In section `1.4 Fit and test classifier (SVM)` I trained a linear SVM by applying `LinearSVC()` on the training data. 
 
 ###Sliding Window Search
 
 ####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
+I realized that cars in certain image areas and therefore distance have very specific sizes. In section `2.1 Define windows` I created `get_window_positions()` and `generate_windows()` which enable a flexibel choice of sizes and densities of windows in different regions of the input image. In the third codesell of the section I defined all the windows I used in my pipeline, which I identified via an experimental approach. Here are all my 7 search regions on one example image:
 
-![alt text][image3]
+![alt text][image03]
+
+Combining all search image regions results in the following windows in the example image:
+
+![alt text][image04]
 
 ####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
+I optimized the performance of the classifier as described in the previous answers.  Here are some example images:
 
-![alt text][image4]
+![alt text][image05]
 ---
 
 ### Video Implementation
