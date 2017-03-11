@@ -37,18 +37,17 @@ You're reading it!
 
 The code for this step is contained in the sections `1.1 Initialize images and labels` and `1.2 Extract image features` of the IPython notebook.  
 
-I started by reading in all the `vehicle` and `non-vehicle` images and splitting them in a training and a test set. I split the data for vehicle images manually by spliting it according to the filename to prevent overfitting.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
+I started by loading all the `vehicle` and `non-vehicle` images and splitting them in a training and a test set. I split the data for vehicle images manually based on the filename (alphabetically) to prevent overfitting. Typically there are several almost identical images in an alphabetical row in the folders. A randomized split therefore would result in similar images in the training and test set, which would result in overfitting.  Here is an example of one image from the `vehicle` and one image from the `non-vehicle` class:
 
 ![alt text][image01]
 
-I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
+After loading the images I extracted their features. I explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feeling for what the `skimage.hog()` output looks like.
 
-Eventually, I found the `YCrCb` color space and HOG parameters of `orientations=6`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`to work best on my pipeline. Here is a visualized example of my hog features:
-
+Eventually, I found the `YCrCb` color space and HOG parameters of `orientations=6`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`to work best on my pipeline. Here is a visualized example of hog features based on my customization:
 
 ![alt text][image02]
 
-I combined the hog features with color features as it significantly improved the performance of my classifier (section `1.2 Extract image features` first code box).
+Beyond the hog features, I added color features as it significantly improved the performance of my classifier (section `1.2 Extract image features` first code box).
 
 ####2. Explain how you settled on your final choice of HOG parameters.
 
@@ -63,7 +62,7 @@ In section `1.4 Fit and test classifier (SVM)` I trained a linear SVM by applyin
 
 ####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I realized that cars in certain image areas and therefore distance have very specific sizes. In section `2.1 Define windows` I created `get_window_positions()` and `generate_windows()` which enable a flexibel choice of sizes and densities of windows in different regions of the input image. In the third codesell of the section I defined all the windows I used in my pipeline, which I identified via an experimental approach. Here are all my 7 search regions on one example image:
+I realized that cars in certain image areas and therefore distance have very specific sizes. In section `2.1 Define windows` I created `get_window_positions()` and `generate_windows()` which enable a flexibel choice of sizes and densities of windows in different regions of the input image. In the third code cell of the section I defined all the windows I used in my pipeline, which I identified in an experimental approach. Here are all my final 7 search regions on an example image:
 
 ![alt text][image03]
 
@@ -73,32 +72,42 @@ Combining all search image regions results in the following windows in the examp
 
 ####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-I optimized the performance of the classifier as described in the previous answers.  Here are some example images:
+I optimized the performance of the classifier as described in the previous answers.
+
+Here are the identified windows in the example images as extracted in section `2.2 Get features and predictions for windows`:
 
 ![alt text][image05]
+
+In section `2.3 Get image heatmap and return window` I created the functions `get_activated_windows()`, `add_heat()` and `apply_threshold()` in order to draw heatmaps. The heatmaps get activated by incrementing the pixels, which are in an activated window, by 1. The resulting heatmats for the example images look like this:
+
+![alt text][image06]
+
+In section `2.4 Create labeled windows` I enhanced my pipeline by making it possible to plot boxes around the cars. Based on the heatmap images one can use the `get_label()` function, which uses `scipy.ndimage.measurements.label()`, to create a labeled version of the activated fields. Visualized on our test images it looks like this:
+
+![alt text][image07]
+
+Eventually I defined the function `draw_labeled_windows()` in order to draw boxes around the identified areas based on the labels. On our example images the output of `draw_labeled_windows()` looks like this:
+
+![alt text][image08]
+
+
+
+
 ---
 
 ### Video Implementation
 
-####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
+####1. Provide a link to your final video output.  
+
 Here's a [link to my video result](./project_video.mp4)
 
 
 ####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
+In section `3.1 Define class to store previous image values` I defined a class to store the window positions of positive detections in the last frames of the video.
 
-Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
 
-### Here are six frames and their corresponding heatmaps:
-
-![alt text][image5]
-
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
-![alt text][image6]
-
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
-![alt text][image7]
+In `3.2 Define function to apply processing pipeline on image` the whole pipeline described in the previous section of this report is implemented. In addition it stores the 10 previously identified windows in the `Windows()` class instance `window_tracker`. For the generation of the heatmap all windows identified in the last 10 images are used to increment the heatmap. After a threshold of 15 is applied on the heatmap, the labels and boxes are generated.
 
 
 
@@ -108,5 +117,25 @@ Here's an example result showing the heatmap from a series of frames of video, t
 
 ####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+Strongest issues I faced:
+* Identification of search windows
+  * Initially I implemented a function which generated different image sizes based on the y-level of the image
+  * However, I realized that cars on the left and the right require very different window sizes (wider) than the ones in the middle
+  * As a consequence, I implemented my current approach.
+* Classifier overfitting
+  * Initially I used `sklearn.model_selection.train_test_split()`. 
+  * However, I realized that randomization does not work well for the vehicle images, as there are several similar images right after each other
+  * Therefore I splitted the vehicle images based on the position in the folder
+* Rescaling of images correctly between cv2 and matplotlib-functions
+  * Eventually I immediatly rescaled cv2 functions to values between 0 and 1 as matplotlib does for png-images
 
+When is my pipeline likely to fail (and what one could do about it):
+* In different light/wheater conditions 
+  * Detect light/weather condition
+  * Provide customized classifiers for each light/wheather
+* In non-flat terrains
+  * Implement terrain detection
+  * Adjust window frames for search dynamically based on current terrain
+* In case of strong traffic on a counter lane right next to the car 
+  * Combine vehicle detection with lane detection
+  * Only detect cars on lanes, where they are suppose to be
