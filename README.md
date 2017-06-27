@@ -22,18 +22,18 @@ The goals / steps of this project are the following:
 [video01]: ./project_video_annotated.mp4
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
-###Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
+### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
 
 ---
-###Writeup / README
+### Writeup / README
 
-####1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.
+#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.
 
 You're reading it!
 
-###Histogram of Oriented Gradients (HOG)
+### Histogram of Oriented Gradients (HOG)
 
-####1. Explain how (and identify where in your code) you extracted HOG features from the training images.
+#### 1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
 The code for this step is contained in the sections `1.1 Initialize images and labels` and `1.2 Extract image features` of the IPython notebook.  
 
@@ -53,14 +53,14 @@ Beyond the hog features, I added color features as it significantly improved the
 
 I initially tried some combinations of parameters. When I had a working model with sufficient results I continued to implement my pipeline. Afterwards I returned and fine-tuned the parameters coming up with the parameters described in the previous section. For efficiency purposes I furthermore scaled down the classifier images to (24,24) (section `1.2 Extract image features` first code box).
 
-####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
+#### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
 Before training my classifier I applied `StandardScaler()` to standardize my combined hog and color features in section `1.3 Scale training and testing data`.
 In section `1.4 Fit and test classifier (SVM)` I trained a linear SVM by applying `LinearSVC()` on the training data. 
 
-###Sliding Window Search
+### Sliding Window Search
 
-####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
+#### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
 I realized that cars in certain image areas and therefore distance have very specific sizes. In section `2.1 Define windows` I created `get_window_positions()` and `generate_windows()` which enable a flexibel choice of sizes and densities of windows in different regions of the input image. In the third code cell of the section I defined all the windows I used in my pipeline, which I identified in an experimental approach. Here are all my final 7 search regions on an example image:
 
@@ -70,7 +70,7 @@ Combining all search image regions results in the following windows in the examp
 
 ![alt text][image04]
 
-####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
+#### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
 I optimized the performance of the classifier as described in the previous answers.
 
@@ -97,12 +97,12 @@ Eventually I defined the function `draw_labeled_windows()` in order to draw boxe
 
 ### Video Implementation
 
-####1. Provide a link to your final video output.  
+#### 1. Provide a link to your final video output.  
 
 Here's a [link to my video result](./project_video.mp4)
 
 
-####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
+#### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
 In section `3.1 Define class to store previous image values` I defined a class to store the window positions of positive detections in the last frames of the video.
 
@@ -113,9 +113,9 @@ In `3.2 Define function to apply processing pipeline on image` the whole pipelin
 
 ---
 
-###Discussion
+### Discussion
 
-####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
 Strongest issues I faced:
 * Identification of search windows
