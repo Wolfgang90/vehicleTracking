@@ -49,7 +49,7 @@ Eventually, I found the `YCrCb` color space and HOG parameters of `orientations=
 
 Beyond the hog features, I added color features as it significantly improved the performance of my classifier (section `1.2 Extract image features` first code box).
 
-####2. Explain how you settled on your final choice of HOG parameters.
+#### 2. Explain how you settled on your final choice of HOG parameters.
 
 I initially tried some combinations of parameters. When I had a working model with sufficient results I continued to implement my pipeline. Afterwards I returned and fine-tuned the parameters coming up with the parameters described in the previous section. For efficiency purposes I furthermore scaled down the classifier images to (24,24) (section `1.2 Extract image features` first code box).
 
